@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.loyi.cloud.wechat.platform.model.ServerResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +93,7 @@ public class ArticleController extends BaseController {
 
 	@RequiresUser
 	@PostMapping(value = "create")
-	public Article create(@RequestBody Article article) {
+	public ServerResponse create(@RequestBody Article article) {
 		article.setCreaterId(getLoginUID());
 		article.setCreater(getLoginUname());
 
@@ -104,7 +105,7 @@ public class ArticleController extends BaseController {
 
 		article.setContent("");
 		article.setCreaterId("");
-		return article;
+		return ServerResponse.createBySuccess(article);
 	}
 
 	@ResponseBody

@@ -30,6 +30,7 @@ public class ArticleEntity {
 	/**
 	 * 封面图片地址
 	 */
+	@Column(columnDefinition = "text")
 	private String thumbUrl;
 
 	/**

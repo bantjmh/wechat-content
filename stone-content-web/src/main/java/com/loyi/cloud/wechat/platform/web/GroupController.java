@@ -31,7 +31,8 @@ public class GroupController {
 	@RequiresUser
 	@GetMapping(value = "search")
 	public Page<Group> search(GroupFilter filter, Pageable pageable) {
-		return groupService.search(filter, pageable);
+		Page<Group> groups = groupService.search(filter, pageable);
+		return groups;
 	}
 
 	/**
