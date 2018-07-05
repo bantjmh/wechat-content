@@ -44,7 +44,6 @@ public class ImageController extends BaseController {
 	@PostMapping(value = "upload")
 	public Map<String, String> upload(@RequestParam(value = "file", required = false) MultipartFile file)
 			throws IOException {
-
 		String id = attachService.upload(file);
 		String uid = getLoginUID();
 		ImageEntity imageEntity = new ImageEntity();
