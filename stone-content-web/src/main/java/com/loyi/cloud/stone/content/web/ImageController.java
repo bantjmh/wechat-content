@@ -104,7 +104,7 @@ public class ImageController extends BaseController {
 		attach.setMimeType(attachEntity.getMimeType());
 		attach.setIso(attachEntity.getIso());
 		attach.setCreatedTime(attachEntity.getCreatedTime());
-		attach.setFlash(attachEntity.isFlash());
+		attach.setFlash(attachEntity.getFlash());
 		attach.setCompression(attachEntity.getCompression());
 		attach.setModel(attachEntity.getModel());
 		return attach;

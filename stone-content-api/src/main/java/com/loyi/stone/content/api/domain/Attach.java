@@ -55,7 +55,7 @@ public class Attach {
     /**
      * 是否使用闪光灯
      */
-    private boolean flash;
+    private int flash;
 
     /**
      * 压缩比
@@ -163,11 +163,11 @@ public class Attach {
         this.createdTime = createdTime;
     }
 
-    public boolean isFlash() {
+    public int getFlash() {
         return flash;
     }
 
-    public void setFlash(boolean flash) {
+    public void setFlash(int flash) {
         this.flash = flash;
     }
 

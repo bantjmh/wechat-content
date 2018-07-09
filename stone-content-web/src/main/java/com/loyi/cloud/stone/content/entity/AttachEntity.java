@@ -68,8 +68,9 @@ public class AttachEntity {
 
 	/**
 	 * 是否使用闪光灯
+	 * 0 未使用 1使用
 	 */
-	private boolean flash;
+	private int flash;
 
 	/**
 	 * 压缩比
@@ -179,11 +180,11 @@ public class AttachEntity {
 		this.createdTime = createdTime;
 	}
 
-	public boolean isFlash() {
+	public int getFlash() {
 		return flash;
 	}
 
-	public void setFlash(boolean flash) {
+	public void setFlash(int flash) {
 		this.flash = flash;
 	}
 
