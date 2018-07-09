@@ -16,4 +16,7 @@ public interface AttachRepository extends JpaRepository<AttachEntity, String>, J
 
 	@Query(value = " from AttachEntity where businessid = ?1 and type = ?2")
 	List<AttachEntity> selectByBusinessByType(String businessid, int type);
+
+	@Query(value = " from AttachEntity where uid = ?1")
+	List<AttachEntity> selectByUid(String uid);
 }

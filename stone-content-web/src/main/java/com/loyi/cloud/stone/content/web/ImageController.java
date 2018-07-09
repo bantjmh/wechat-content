@@ -8,10 +8,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.loyi.cloud.stone.content.entity.ImageEntity;
+
+import com.loyi.cloud.stone.content.entity.AttachEntity;
 import com.loyi.cloud.stone.content.model.ServerResponse;
 import com.loyi.cloud.stone.content.model.vo.ImageVo;
-import com.loyi.cloud.stone.content.dao.ImageRepository;
+
+import com.loyi.stone.content.api.domain.Attach;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,20 +38,14 @@ public class ImageController extends BaseController {
 	@Autowired
 	AttachService attachService;
 
-	@Autowired
-	ImageRepository imageRepository;
 
 	@ResponseBody
 	// @RequiresUser
 	@PostMapping(value = "upload")
 	public Map<String, String> upload(@RequestParam(value = "file", required = false) MultipartFile file)
 			throws IOException {
-		String id = attachService.upload(file);
 		String uid = getLoginUID();
-		ImageEntity imageEntity = new ImageEntity();
-		imageEntity.setMediaId(id);
-		imageEntity.setUid(uid);
-		imageRepository.save(imageEntity);
+		String id = attachService.upload(file,uid);
 
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("mediaId", id);
@@ -61,9 +57,7 @@ public class ImageController extends BaseController {
 	@RequiresUser
 	@PostMapping(value = "remove")
 	public void remove(@RequestBody Map<String, String> param) throws IOException {
-
 		attachService.remove(param.get("mediaId"));
-
 	}
 
 	@GetMapping("view")
@@ -76,18 +70,44 @@ public class ImageController extends BaseController {
 		logger.info("receive image list request");
 		String uid = getLoginUID();
 		logger.info("uid:{}",uid);
-		List<ImageEntity> imageEntityList = imageRepository.selectByUid(uid);
+		List<AttachEntity> imageEntityList = attachRepository.selectByUid(uid);
 		String serverUrl = wechatProperties.getServerUrl();
 		List<ImageVo> imageVoList = new LinkedList<>();
 		imageEntityList.forEach(imageEntity -> {
 			ImageVo imageVo = new ImageVo();
-			imageVo.setMediaId(imageEntity.getMediaId());
-			String imageUrl = serverUrl+"/api/stone-content/image/view?mediaId="+imageEntity.getMediaId();
+			imageVo.setMediaId(imageEntity.getId());
+			String imageUrl = serverUrl+"/api/stone-content/image/view?mediaId="+imageEntity.getId();
 			imageVo.setImageUrl(imageUrl);
 			imageVoList.add(imageVo);
 		});
 		logger.info("image list response success  data : {}",imageVoList);
 		return ServerResponse.createBySuccess(imageVoList);
+	}
+
+	@GetMapping("detail")
+	public Attach detail(String mediaId){
+		AttachEntity entity = attachRepository.findOne(mediaId);
+		return asseamblyAttach(entity);
+	}
+
+	private Attach asseamblyAttach(AttachEntity attachEntity){
+		Attach attach = new Attach();
+		attach.setId(attachEntity.getId());
+		attach.setUid(attachEntity.getUid());
+		attach.setUploadtime(attachEntity.getUploadtime());
+		attach.setFilename(attachEntity.getFilename());
+		attach.setType(attachEntity.getType());
+		attach.setWidth(attachEntity.getWidth());
+		attach.setHeight(attachEntity.getHeight());
+		attach.setAperture(attachEntity.getAperture());
+		attach.setFocusLength(attachEntity.getFocusLength());
+		attach.setMimeType(attachEntity.getMimeType());
+		attach.setIso(attachEntity.getIso());
+		attach.setCreatedTime(attachEntity.getCreatedTime());
+		attach.setFlash(attachEntity.isFlash());
+		attach.setCompression(attachEntity.getCompression());
+		attach.setModel(attachEntity.getModel());
+		return attach;
 	}
 
 }

@@ -1,29 +1,21 @@
-package com.loyi.cloud.stone.content.entity;
+package com.loyi.stone.content.api.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 
 /**
- * Created by fq on 2018/7/4.
+ * Created by fq on 2018/7/6.
  */
-@Entity
-@Table(name = "t_image")
-public class ImageEntity {
+public class Attach {
 
-    @Id
-    @Column(length = 50)
-    private String mediaId;
+    private String id;
 
-    @Column(length = 50)
+    private String filename;
+
+    private Date uploadtime = new Date();
+
     private String uid;
 
-    /**
-     * 图片上传时间
-     */
-    private Date updateTime;
+    private Integer type = 1;
 
     /**
      * 宽度
@@ -38,7 +30,6 @@ public class ImageEntity {
     /**
      * 光圈
      */
-    @Column(length = 50)
     private String aperture;
 
     /**
@@ -49,7 +40,6 @@ public class ImageEntity {
     /**
      * 媒体类型
      */
-    @Column(length = 50)
     private String mimeType;
 
     /**
@@ -70,21 +60,35 @@ public class ImageEntity {
     /**
      * 压缩比
      */
-    @Column(length = 50)
     private String compression;
 
     /**
      * 设备型号
      */
-    @Column(length = 50)
     private String model;
 
-    public String getMediaId() {
-        return mediaId;
+    public String getId() {
+        return id;
     }
 
-    public void setMediaId(String mediaId) {
-        this.mediaId = mediaId;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public Date getUploadtime() {
+        return uploadtime;
+    }
+
+    public void setUploadtime(Date uploadtime) {
+        this.uploadtime = uploadtime;
     }
 
     public String getUid() {
@@ -95,12 +99,12 @@ public class ImageEntity {
         this.uid = uid;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public Integer getType() {
+        return type;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public Integer getWidth() {

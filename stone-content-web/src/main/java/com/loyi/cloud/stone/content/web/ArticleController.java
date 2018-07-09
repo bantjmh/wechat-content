@@ -1,19 +1,20 @@
 package com.loyi.cloud.stone.content.web;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.loyi.cloud.stone.content.config.WechatProperties;
+import com.loyi.cloud.stone.content.dao.ArticleSendRecordRepository;
+import com.loyi.cloud.stone.content.entity.ArticleSendRecordEntity;
 import com.loyi.cloud.stone.content.filter.ArticleFilter;
-import com.loyi.cloud.stone.content.model.Article;
 import com.loyi.cloud.stone.content.model.ServerResponse;
 import com.loyi.cloud.stone.content.service.ArticleService;
 import com.loyi.cloud.stone.content.service.AuthorizerTokenManager;
+import com.loyi.stone.content.api.domain.Article;
+import com.loyi.stone.content.api.domain.ArticleSendRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class ArticleController extends BaseController {
 	@Autowired
     AuthorizerTokenManager authorizerTokenManager;
 
+	@Autowired
+	ArticleSendRecordRepository articleSendRecordRepository;
+
 	@ResponseBody
 	@RequiresUser
 	@GetMapping(value = "search")
@@ -65,7 +69,7 @@ public class ArticleController extends BaseController {
 	public Preview preview(String id) {
 		Preview preview = new Preview();
 		String url = wechatProperties.getServerUrl();
-		url = url + "/article/view/" + id;
+		url = url + "/api/stone-content/article/view/" + id;
 		preview.setUrl(url);
 		return preview;
 	}
@@ -81,6 +85,18 @@ public class ArticleController extends BaseController {
 
 		response.setContentType("text/html; charset=utf-8");
 		template.process(article, response.getWriter());
+	}
+
+	@GetMapping(value = "detail")
+	public Article detail(String articleId){
+		Article article = articleService.detail(articleId);
+		return article;
+	}
+
+	@PostMapping(value = "save/record")
+	public void saveRecord(@RequestBody ArticleSendRecord articleSendRecord){
+		ArticleSendRecordEntity entity = assemblyEntity(articleSendRecord);
+		articleSendRecordRepository.save(entity);
 	}
 
 	@ResponseBody
@@ -114,55 +130,6 @@ public class ArticleController extends BaseController {
 		articleService.modify(article);
 	}
 
-	@Async
-	@ResponseBody
-	@RequiresUser
-	@PostMapping(value = "send")
-	public void send(@RequestBody BatchSend param) throws FileNotFoundException {
-
-		articleService.batchSend(param);
-	}
-
-	public static class BatchSend {
-		private String articleId;
-		private List<String> appId;
-		private List<String> groupId;
-		@ApiModelProperty(value = "用户标签名称")
-		private String tag;
-
-		public String getTag() {
-			return tag;
-		}
-
-		public void setTag(String tag) {
-			this.tag = tag;
-		}
-
-		public String getArticleId() {
-			return articleId;
-		}
-
-		public void setArticleId(String articleId) {
-			this.articleId = articleId;
-		}
-
-		public List<String> getAppId() {
-			return appId;
-		}
-
-		public void setAppId(List<String> appId) {
-			this.appId = appId;
-		}
-
-		public List<String> getGroupId() {
-			return groupId;
-		}
-
-		public void setGroupId(List<String> groupId) {
-			this.groupId = groupId;
-		}
-
-	}
 
 	public static class Preview {
 		private String url;
@@ -176,4 +143,14 @@ public class ArticleController extends BaseController {
 		}
 	}
 
+	private ArticleSendRecordEntity assemblyEntity(ArticleSendRecord record){
+		ArticleSendRecordEntity entity = new ArticleSendRecordEntity();
+		entity.setId(record.getId());
+		entity.setAppId(record.getAppId());
+		entity.setArticleId(record.getArticleId());
+		entity.setCreated(record.getCreated());
+		entity.setErrcode(record.getErrcode());
+		entity.setErrmsg(record.getErrmsg());
+		return entity;
+	}
 }

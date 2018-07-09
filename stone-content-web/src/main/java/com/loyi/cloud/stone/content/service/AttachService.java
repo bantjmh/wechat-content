@@ -27,7 +27,7 @@ public class AttachService {
 	@Autowired
     WechatProperties properties;
 
-	public String upload(MultipartFile file) throws IOException {
+	public String upload(MultipartFile file,String uid) throws IOException {
 
 		String id = UUID.randomUUID().toString();
 		String originalFilename = file.getOriginalFilename();
@@ -50,6 +50,7 @@ public class AttachService {
 		AttachEntity e = new AttachEntity();
 		e.setId(id);
 		e.setFilename(filename);
+		e.setUid(uid);
 
 		attachRepository.save(e);
 

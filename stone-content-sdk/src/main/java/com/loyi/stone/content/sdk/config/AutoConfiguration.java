@@ -8,7 +8,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableFeignClients(basePackages = "com.loyi.stone.content.client")
+@EnableFeignClients(basePackages = "com.loyi.stone.content.sdk.client")
 public class AutoConfiguration {
 
     private Logger LOG = LoggerFactory.getLogger(this.getClass());
