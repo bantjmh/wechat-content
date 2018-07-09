@@ -15,7 +15,7 @@ public class WechatProperties {
 //
 	private String serverUrl = "http://open.loyi.cn";
 
-	private String filePath = "E:\\resource";
+	private String filePath = "/var/file";
 
 	public String getServerUrl() {
 		return serverUrl;
