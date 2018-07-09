@@ -10,3 +10,5 @@ hbmis-source-api/hbmis-source-api.iml
 hbmis-source-rest/hbmis-source-rest.iml
 hbmis-source-sdk/hbmis-source-sdk.iml
 stone-content.iml
+*.iml
+.idea
