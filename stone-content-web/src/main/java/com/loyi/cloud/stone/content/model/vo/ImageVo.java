@@ -6,6 +6,7 @@ package com.loyi.cloud.stone.content.model.vo;
 public class ImageVo {
     private String mediaId;
     private String imageUrl;
+    private String filename;
 
     public String getMediaId() {
         return mediaId;
@@ -21,5 +22,13 @@ public class ImageVo {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

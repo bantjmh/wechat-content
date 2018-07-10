@@ -80,6 +80,7 @@ public class ImageController extends BaseController {
 			imageVo.setMediaId(imageEntity.getId());
 			String imageUrl = serverUrl+"/"+imageEntity.getFilename();
 			imageVo.setImageUrl(imageUrl);
+			imageVo.setFilename(imageEntity.getFilename());
 			imageVoList.add(imageVo);
 		});
 		logger.info("image list response success  data : {}",imageVoList);
