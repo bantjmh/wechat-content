@@ -6,6 +6,8 @@ public class ArticleFilter {
 
 	private String groupId;
 
+	private int checkStatus;
+
 	public String getGroupId() {
 		return groupId;
 	}
@@ -22,4 +24,11 @@ public class ArticleFilter {
 		this.keyword = keyword;
 	}
 
+	public int getCheckStatus() {
+		return checkStatus;
+	}
+
+	public void setCheckStatus(int checkStatus) {
+		this.checkStatus = checkStatus;
+	}
 }

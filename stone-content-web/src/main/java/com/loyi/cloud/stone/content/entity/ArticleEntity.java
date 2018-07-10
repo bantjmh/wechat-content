@@ -84,6 +84,18 @@ public class ArticleEntity {
 
 	private Date created;
 
+	/**
+	 * 待审核 0
+	 * 已审核 1
+	 * 未通过 -1
+	 */
+	@Column(columnDefinition = "tinyint default 0")
+	private int checkStatus;
+
+	private double longtitude;
+
+	private double latitude;
+
 	public String getId() {
 		return id;
 	}
@@ -220,4 +232,31 @@ public class ArticleEntity {
 		this.only_fans_can_comment = only_fans_can_comment;
 	}
 
+	public void setOnly_fans_can_comment(int only_fans_can_comment) {
+		this.only_fans_can_comment = only_fans_can_comment;
+	}
+
+	public int getCheckStatus() {
+		return checkStatus;
+	}
+
+	public void setCheckStatus(int checkStatus) {
+		this.checkStatus = checkStatus;
+	}
+
+	public double getLongtitude() {
+		return longtitude;
+	}
+
+	public void setLongtitude(double longtitude) {
+		this.longtitude = longtitude;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
 }

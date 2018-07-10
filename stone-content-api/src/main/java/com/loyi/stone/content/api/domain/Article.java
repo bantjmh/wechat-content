@@ -64,6 +64,12 @@ public class Article {
 
     private Date created;
 
+    private int checkStatus;
+
+    private double longtitude;
+
+    private double latitude;
+
     public String getMediaId() {
         return mediaId;
     }
@@ -198,5 +204,29 @@ public class Article {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public int getCheckStatus() {
+        return checkStatus;
+    }
+
+    public void setCheckStatus(int checkStatus) {
+        this.checkStatus = checkStatus;
+    }
+
+    public double getLongtitude() {
+        return longtitude;
+    }
+
+    public void setLongtitude(double longtitude) {
+        this.longtitude = longtitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }
