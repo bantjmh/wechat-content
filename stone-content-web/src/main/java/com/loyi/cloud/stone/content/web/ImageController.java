@@ -73,7 +73,7 @@ public class ImageController extends BaseController {
 		String uid = getLoginUID();
 		logger.info("uid:{}",uid);
 		List<AttachEntity> imageEntityList = attachRepository.selectByUid(uid);
-		String serverUrl = wechatProperties.getServerUrl();
+		String serverUrl = wechatProperties.getImageServerUrl();
 		List<ImageVo> imageVoList = new LinkedList<>();
 		imageEntityList.forEach(imageEntity -> {
 			ImageVo imageVo = new ImageVo();

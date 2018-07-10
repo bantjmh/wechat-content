@@ -20,7 +20,6 @@ import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +33,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 
 @Api(description = "文章管理接口")
 @Controller
@@ -68,7 +66,7 @@ public class ArticleController extends BaseController {
 	@GetMapping(value = "preview")
 	public Preview preview(String id) {
 		Preview preview = new Preview();
-		String url = wechatProperties.getServerUrl();
+		String url = wechatProperties.getApiServerUrl();
 		url = url + "/api/stone-content/article/view/" + id;
 		preview.setUrl(url);
 		return preview;

@@ -13,17 +13,19 @@ public class WechatProperties {
 //
 //	private String callbackUrl = "http://open.loyi.cn/component/bind/callback/%s";// 授权后回调URI
 //
-	private String serverUrl = "http://image-open.loyi.cn";
+	private String imageServerUrl = "http://image-open.loyi.cn";
 
 //	private String filePath = "E://resource";
 	private String filePath = "/var/file";
 
-	public String getServerUrl() {
-		return serverUrl;
+	private String apiServerUrl = "http://open.loyi.cn";
+
+	public String getImageServerUrl() {
+		return imageServerUrl;
 	}
 
-	public void setServerUrl(String serverUrl) {
-		this.serverUrl = serverUrl;
+	public void setImageServerUrl(String imageServerUrl) {
+		this.imageServerUrl = imageServerUrl;
 	}
 
 	public String getFilePath() {
@@ -34,7 +36,15 @@ public class WechatProperties {
 		this.filePath = filePath;
 	}
 
-//	public String getAppid() {
+    public String getApiServerUrl() {
+        return apiServerUrl;
+    }
+
+    public void setApiServerUrl(String apiServerUrl) {
+        this.apiServerUrl = apiServerUrl;
+    }
+
+    //	public String getAppid() {
 //		return appid;
 //	}
 //
