@@ -46,9 +46,11 @@ public class ImageController extends BaseController {
 			throws IOException {
 		String uid = getLoginUID();
 		String id = attachService.upload(file,uid);
-
+		AttachEntity attachEntity = attachRepository.findOne(id);
+		String fileName = attachEntity.getFilename();
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("mediaId", id);
+		result.put("filename",fileName);
 		return result;
 
 	}
@@ -76,7 +78,7 @@ public class ImageController extends BaseController {
 		imageEntityList.forEach(imageEntity -> {
 			ImageVo imageVo = new ImageVo();
 			imageVo.setMediaId(imageEntity.getId());
-			String imageUrl = serverUrl+"/api/stone-content/image/view?mediaId="+imageEntity.getId();
+			String imageUrl = serverUrl+"/"+imageEntity.getFilename();
 			imageVo.setImageUrl(imageUrl);
 			imageVoList.add(imageVo);
 		});

@@ -13,8 +13,9 @@ public class WechatProperties {
 //
 //	private String callbackUrl = "http://open.loyi.cn/component/bind/callback/%s";// 授权后回调URI
 //
-	private String serverUrl = "http://open.loyi.cn";
+	private String serverUrl = "http://image-open.loyi.cn";
 
+//	private String filePath = "E://resource";
 	private String filePath = "/var/file";
 
 	public String getServerUrl() {
