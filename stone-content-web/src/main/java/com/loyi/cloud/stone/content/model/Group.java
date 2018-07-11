@@ -2,6 +2,10 @@ package com.loyi.cloud.stone.content.model;
 
 import java.util.Date;
 
+/**
+ * 文章分组
+ *
+ */
 public class Group {
 	private String id;
 
@@ -9,9 +13,7 @@ public class Group {
 
 	private Date created;
 
-	/**
-	 * 1=公众号分组；2=文章分组
-	 */
+	@Deprecated
 	private Integer type;
 
 	public String getTypeStr() {
