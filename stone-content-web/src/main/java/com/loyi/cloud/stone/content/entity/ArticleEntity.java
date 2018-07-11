@@ -85,11 +85,11 @@ public class ArticleEntity {
 	private Date created;
 
 	/**
-	 * 待审核 0
-	 * 已审核 1
+	 * 待审核 1
+	 * 已审核 2
 	 * 未通过 -1
 	 */
-	@Column(columnDefinition = "tinyint default 0")
+	@Column(columnDefinition = "tinyint default 1")
 	private int checkStatus;
 
 	private double longtitude;
