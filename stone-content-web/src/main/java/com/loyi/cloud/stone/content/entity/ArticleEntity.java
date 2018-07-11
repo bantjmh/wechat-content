@@ -18,7 +18,7 @@ public class ArticleEntity {
 	@Column(length = 80)
 	private String title;
 
-	@Column(columnDefinition = "text")
+	@Column(columnDefinition = "longtext")
 	private String content;
 
 	/**
