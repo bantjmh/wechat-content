@@ -29,7 +29,7 @@ public class SwaggerAutoConfiguration {
 	 * @return
 	 */
 	private ApiInfo apiInfo() {
-		ApiInfo apiInfo = (new ApiInfoBuilder()).title("微信管理平台 API接口文档").description("")
+		ApiInfo apiInfo = (new ApiInfoBuilder()).title("内容管理平台 API接口文档").description("")
 				.contact(new Contact("loyi", "http://www.loyi.cn", "14283184@qq.com")).version("1.0").build();
 		return apiInfo;
 	}
