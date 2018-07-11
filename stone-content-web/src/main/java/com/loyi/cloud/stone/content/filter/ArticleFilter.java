@@ -31,4 +31,13 @@ public class ArticleFilter {
 	public void setCheckStatus(int checkStatus) {
 		this.checkStatus = checkStatus;
 	}
+
+	@Override
+	public String toString() {
+		return "ArticleFilter{" +
+				"keyword='" + keyword + '\'' +
+				", groupId='" + groupId + '\'' +
+				", checkStatus=" + checkStatus +
+				'}';
+	}
 }

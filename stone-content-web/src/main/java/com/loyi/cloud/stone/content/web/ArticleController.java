@@ -58,7 +58,7 @@ public class ArticleController extends BaseController {
 	@RequiresUser
 	@GetMapping(value = "search")
 	public Page<Article> search(ArticleFilter filter, Pageable pageable) {
-		
+		logger.info("receive article search request filter: {}");
 		return articleService.search(filter, pageable);
 	}
 
