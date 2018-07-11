@@ -6,55 +6,57 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.loyi.cloud.stone.content.config.WechatProperties;
-import com.loyi.cloud.stone.content.dao.ArticleSendRecordRepository;
-import com.loyi.cloud.stone.content.entity.ArticleSendRecordEntity;
-import com.loyi.cloud.stone.content.filter.ArticleFilter;
-import com.loyi.cloud.stone.content.model.ServerResponse;
-import com.loyi.cloud.stone.content.service.ArticleService;
-import com.loyi.cloud.stone.content.service.AuthorizerTokenManager;
-import com.loyi.stone.content.api.domain.Article;
-import com.loyi.stone.content.api.domain.ArticleSendRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+
+import com.loyi.cloud.stone.content.config.WechatProperties;
+import com.loyi.cloud.stone.content.dao.ArticleSendRecordRepository;
+import com.loyi.cloud.stone.content.entity.ArticleSendRecordEntity;
+import com.loyi.cloud.stone.content.filter.ArticleFilter;
+import com.loyi.cloud.stone.content.model.ServerResponse;
+import com.loyi.cloud.stone.content.model.vo.AuditVo;
+import com.loyi.cloud.stone.content.service.ArticleService;
+import com.loyi.cloud.stone.content.service.AuthorizerTokenManager;
+import com.loyi.stone.content.api.domain.Article;
+import com.loyi.stone.content.api.domain.ArticleSendRecord;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(description = "文章管理接口")
-@Controller
+@RestController
 @RequestMapping(value = "article")
 public class ArticleController extends BaseController {
 
 	@Autowired
-    ArticleService articleService;
+	ArticleService articleService;
 
 	@Autowired
-    WechatProperties wechatProperties;
+	WechatProperties wechatProperties;
 
 	@Autowired
 	private FreeMarkerConfigurer freeMarkerConfigurer;
 
 	@Autowired
-    AuthorizerTokenManager authorizerTokenManager;
+	AuthorizerTokenManager authorizerTokenManager;
 
 	@Autowired
 	ArticleSendRecordRepository articleSendRecordRepository;
 
-	@ResponseBody
 	@RequiresUser
 	@GetMapping(value = "search")
 	public Page<Article> search(ArticleFilter filter, Pageable pageable) {
@@ -62,7 +64,6 @@ public class ArticleController extends BaseController {
 		return articleService.search(filter, pageable);
 	}
 
-	@ResponseBody
 	@RequiresUser
 	@GetMapping(value = "preview")
 	public Preview preview(String id) {
@@ -87,18 +88,17 @@ public class ArticleController extends BaseController {
 	}
 
 	@GetMapping(value = "detail")
-	public Article detail(String articleId){
+	public Article detail(String articleId) {
 		Article article = articleService.detail(articleId);
 		return article;
 	}
 
 	@PostMapping(value = "save/record")
-	public void saveRecord(@RequestBody ArticleSendRecord articleSendRecord){
+	public void saveRecord(@RequestBody ArticleSendRecord articleSendRecord) {
 		ArticleSendRecordEntity entity = assemblyEntity(articleSendRecord);
 		articleSendRecordRepository.save(entity);
 	}
 
-	@ResponseBody
 	@RequiresUser
 	@PostMapping(value = "remove")
 	public void remove(@RequestBody Map<String, String> map) {
@@ -122,13 +122,19 @@ public class ArticleController extends BaseController {
 		return ServerResponse.createBySuccess(article);
 	}
 
-	@ResponseBody
 	@RequiresUser
 	@PostMapping(value = "modify")
 	public void modify(@RequestBody Article article) {
 		articleService.modify(article);
 	}
 
+	@ApiOperation(value = "审核")
+	@RequiresUser
+	@RequiresRoles(value = { "ADMIN" })
+	@PostMapping(value = "audit")
+	public void audit(@RequestBody AuditVo param) {
+		articleService.update(param);
+	}
 
 	public static class Preview {
 		private String url;
@@ -142,7 +148,7 @@ public class ArticleController extends BaseController {
 		}
 	}
 
-	private ArticleSendRecordEntity assemblyEntity(ArticleSendRecord record){
+	private ArticleSendRecordEntity assemblyEntity(ArticleSendRecord record) {
 		ArticleSendRecordEntity entity = new ArticleSendRecordEntity();
 		entity.setId(record.getId());
 		entity.setAppId(record.getAppId());
