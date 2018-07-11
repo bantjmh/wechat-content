@@ -7,6 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * 文章分组
+ *
+ */
 @Entity
 @Table(name = "t_group")
 public class GroupEntity {
@@ -15,24 +19,10 @@ public class GroupEntity {
 	@Column(length = 50)
 	private String id;
 
-	/**
-	 * 1=公众号分组；2=文章分组
-	 */
-	@Column(columnDefinition = "tinyint")
-	private int type;
-
 	@Column(length = 100)
 	private String name;
 
 	private Date created;
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
 
 	public String getId() {
 		return id;

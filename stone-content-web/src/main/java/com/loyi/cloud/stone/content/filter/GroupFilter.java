@@ -2,10 +2,6 @@ package com.loyi.cloud.stone.content.filter;
 
 public class GroupFilter {
 	private String name;
-	/**
-	 * 1=公众号分组；2=文章分组
-	 */
-	private Integer type;
 
 	private String articleId;
 
@@ -16,15 +12,6 @@ public class GroupFilter {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
 
 	public String getArticleId() {
 		return articleId;

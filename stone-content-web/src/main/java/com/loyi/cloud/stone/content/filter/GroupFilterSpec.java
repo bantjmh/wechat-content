@@ -32,9 +32,6 @@ public class GroupFilterSpec implements Specification<GroupEntity> {
 		if (filter == null) {
 			return predicate;
 		}
-		if (filter.getType() != null) {
-			predicate = cb.and(predicate, cb.equal(root.get("type"), filter.getType()));
-		}
 		if (CollectionUtils.isNotEmpty(notInIds)) {
 			In<String> in = cb.in(root.<String>get("id"));
 			Iterator<String> iterator = this.getNotInIds().iterator();

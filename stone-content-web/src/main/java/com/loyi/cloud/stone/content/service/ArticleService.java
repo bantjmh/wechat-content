@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import com.loyi.cloud.stone.content.dao.ArticleRepository;
 import com.loyi.cloud.stone.content.filter.ArticleFilter;
 import com.loyi.stone.content.api.domain.Article;
@@ -29,6 +31,7 @@ import com.loyi.cloud.stone.content.dao.AttachRepository;
 import com.loyi.cloud.stone.content.entity.ArticleEntity;
 import com.loyi.cloud.stone.content.entity.ArticleGroupRelEntity;
 import com.loyi.cloud.stone.content.filter.ArticleFilterSpec;
+import com.loyi.cloud.stone.content.model.vo.AuditVo;
 
 @Service
 public class ArticleService {
@@ -121,6 +124,11 @@ public class ArticleService {
 			return this.toModel(detail);
 		}
 		return null;
+	}
+
+	@Transactional
+	public void update(AuditVo param) {
+		articleRepository.updateStatus(param.getId(), param.getCheckStatus());
 	}
 
 }
