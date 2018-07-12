@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 
 import com.loyi.cloud.stone.content.config.WechatProperties;
+import com.loyi.cloud.stone.content.dao.AttachRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -25,6 +26,9 @@ public class BaseController {
 
     @Autowired
     WechatProperties wechatProperties;
+
+    @Autowired
+    AttachRepository attachRepository;
 
     protected final String MOBILE_REDIRECT_URL = "mobile_redirect_url";
 
@@ -143,4 +147,6 @@ public class BaseController {
             throw new ValidationException(errors.getFieldErrors().get(0).getDefaultMessage());
         }
     }
+
+
 }

@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.loyi.cloud.stone.content.dao.AttachRepository;
+import com.loyi.cloud.stone.content.entity.AttachEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
@@ -110,7 +112,13 @@ public class ArticleController extends BaseController {
 	public ServerResponse create(@RequestBody Article article) {
 		article.setCreaterId(getLoginUID());
 		article.setCreater(getLoginUname());
-
+        if (StringUtils.isBlank(article.getThumbUrl())&&StringUtils.isNotBlank(article.getMediaId())){
+            logger.info("generate thumbUrl by mediaId");
+            AttachEntity attachEntity = attachRepository.findOne(article.getMediaId());
+            String filename = attachEntity.getFilename();
+            String thumbUrl = wechatProperties.getImageServerUrl()+"/"+filename;
+            article.setThumbUrl(thumbUrl);
+        }
 		if (StringUtils.isNotBlank(article.getId())) {
 			this.modify(article);
 		} else {
