@@ -1248,10 +1248,10 @@
 						<div id="meta_content" class="rich_media_meta_list">
 							<span class="rich_media_meta rich_media_meta_nickname" id="profileBt">
                       <a href="javascript:void(0);" id="js_name">
-                        预览                      </a>
+                        ${author!''}                      </a>
                       <div id="js_profile_qrcode" class="profile_container" style="display:none;">
                           <div class="profile_inner">
-                              <strong class="profile_nickname">预览</strong>
+                              <strong class="profile_nickname">${author!''}</strong>
                               <img class="profile_avatar" id="js_profile_qrcode_img" src="" alt="">
 
                               <p class="profile_meta">
@@ -1260,7 +1260,7 @@
 							</p>
 							<p class="profile_meta">
 								<label class="profile_meta_label">功能介绍</label>
-								<span class="profile_meta_value">这是一个预览页面</span>
+								<span class="profile_meta_value"></span>
 							</p>
 						</div>
 						<span class="profile_arrow_wrp" id="js_profile_arrow_wrp">
@@ -1269,7 +1269,7 @@
                           </span>
 					</div>
 					</span>
-					<em id="publish_time" class="rich_media_meta rich_media_meta_text"></em>
+					<em id="publish_time2" class="rich_media_meta rich_media_meta_text">${created!''}</em>
 				</div>
 				<div class="rich_media_content " lang=="en" id="js_content">
 					${content!''}
@@ -1441,7 +1441,7 @@
 		var svrDate = new Date("1531291996" * 1000);
 		var createDate = new Date("1510732637" * 1000);
 		var ct = "1510732637" * 1;
-		var publish_time = "2017-11-15" || "";
+		var publish_time = "";
 		var cD = {
 			year: createDate.getYear(),
 			month: createDate.getMonth() + 1,
@@ -1483,9 +1483,6 @@
 		} else {
 			showDate = publish_time;
 		};
-		if (document.getElementById("publish_time")) {
-			document.getElementById("publish_time").innerText = showDate;
-		}
 	})();
 	</script>
 	<script nonce="855480619" type="text/javascript">
@@ -1773,7 +1770,7 @@
 	var nickname = "四筒出行";
 	var appmsg_type = "9";
 	var ct = "1510732637";
-	var publish_time = "2017-11-15" || "";
+	var publish_time = "";
 	var user_name = "gh_9a7434c1d837";
 	var user_name_new = "";
 	var fakeid = "";
