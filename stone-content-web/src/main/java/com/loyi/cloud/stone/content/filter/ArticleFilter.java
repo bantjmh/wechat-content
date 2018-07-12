@@ -8,6 +8,10 @@ public class ArticleFilter {
 
 	private int checkStatus;
 
+	private boolean mine;
+
+	private String uid;
+
 	public String getGroupId() {
 		return groupId;
 	}
@@ -32,6 +36,22 @@ public class ArticleFilter {
 		this.checkStatus = checkStatus;
 	}
 
+	public boolean isMine() {
+		return mine;
+	}
+
+	public void setMine(boolean mine) {
+		this.mine = mine;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+
 	@Override
 	public String toString() {
 		return "ArticleFilter{" +
@@ -40,4 +60,6 @@ public class ArticleFilter {
 				", checkStatus=" + checkStatus +
 				'}';
 	}
+
+
 }

@@ -33,9 +33,6 @@ import com.loyi.cloud.stone.content.service.AttachService;
 public class ImageController extends BaseController {
 
 	@Autowired
-	AttachRepository attachRepository;
-
-	@Autowired
 	AttachService attachService;
 
 
@@ -112,5 +109,6 @@ public class ImageController extends BaseController {
 		attach.setModel(attachEntity.getModel());
 		return attach;
 	}
+
 
 }
