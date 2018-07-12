@@ -63,6 +63,9 @@ public class ArticleController extends BaseController {
 	@GetMapping(value = "search")
 	public Page<Article> search(ArticleFilter filter, Pageable pageable) {
 		logger.info("receive article search request filter: {}");
+		if (filter.isMine()){
+		    filter.setUid(getLoginUID());
+        }
 		return articleService.search(filter, pageable);
 	}
 
