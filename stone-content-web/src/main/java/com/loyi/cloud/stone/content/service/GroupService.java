@@ -104,13 +104,13 @@ public class GroupService {
 		return groupIds;
 	}
 
-//	public List<Group> unselected(GroupFilter filter) {
-//		List<String> selectedGroupIds = this.selectedGroupIds(filter);
-//		GroupFilterSpec spec = new GroupFilterSpec(filter);
-//		spec.setNotInIds(selectedGroupIds);
-//		List<GroupEntity> entities = groupRepository.findAll(spec);
-//		return this.toModel(entities);
-//	}
+	public List<Group> unselected(GroupFilter filter) {
+		List<String> selectedGroupIds = this.selectedGroupIds(filter);
+		GroupFilterSpec spec = new GroupFilterSpec(filter);
+		spec.setNotInIds(selectedGroupIds);
+		List<GroupEntity> entities = groupRepository.findAll(spec);
+		return this.toModel(entities);
+	}
 
 	@Transactional
 	public void addRel(GroupController.RelAdd param) {

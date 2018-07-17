@@ -35,6 +35,24 @@ public class GroupController {
 	}
 
 	/**
+	 * 查询已选择的标签
+	 */
+	@RequiresUser
+	@GetMapping(value = "selected")
+	public List<Group> selected(GroupFilter filter) {
+		return groupService.selected(filter);
+	}
+
+	/**
+	 * 查询未选择的标签
+	 */
+	@RequiresUser
+	@GetMapping(value = "unselected")
+	public List<Group> unselected(GroupFilter filter) {
+		return groupService.unselected(filter);
+	}
+	
+	/**
 	 * 给公众号或文章添加分组
 	 */
 	@RequiresUser
