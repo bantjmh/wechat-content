@@ -70,6 +70,8 @@ public class Article {
 
     private double latitude;
 
+    private String contentModel;
+
     public String getMediaId() {
         return mediaId;
     }
@@ -228,5 +230,13 @@ public class Article {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public String getContentModel() {
+        return contentModel;
+    }
+
+    public void setContentModel(String contentModel) {
+        this.contentModel = contentModel;
     }
 }

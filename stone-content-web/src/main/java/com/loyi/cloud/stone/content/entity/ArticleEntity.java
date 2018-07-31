@@ -96,6 +96,10 @@ public class ArticleEntity {
 
 	private double latitude;
 
+	@Column(columnDefinition = "longtext")
+	private String contentModel;
+
+
 	public String getId() {
 		return id;
 	}
@@ -258,5 +262,13 @@ public class ArticleEntity {
 
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
+	}
+
+	public String getContentModel() {
+		return contentModel;
+	}
+
+	public void setContentModel(String contentModel) {
+		this.contentModel = contentModel;
 	}
 }
