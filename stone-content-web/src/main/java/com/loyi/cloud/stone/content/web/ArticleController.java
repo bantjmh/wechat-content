@@ -1,14 +1,14 @@
 package com.loyi.cloud.stone.content.web;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.loyi.cloud.stone.content.dao.AttachRepository;
-import com.loyi.cloud.stone.content.entity.AttachEntity;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import com.loyi.cloud.stone.content.config.WechatProperties;
 import com.loyi.cloud.stone.content.dao.ArticleSendRecordRepository;
 import com.loyi.cloud.stone.content.entity.ArticleSendRecordEntity;
+import com.loyi.cloud.stone.content.entity.AttachEntity;
 import com.loyi.cloud.stone.content.filter.ArticleFilter;
 import com.loyi.cloud.stone.content.model.ServerResponse;
 import com.loyi.cloud.stone.content.model.vo.AuditVo;
@@ -63,9 +64,9 @@ public class ArticleController extends BaseController {
 	@GetMapping(value = "search")
 	public Page<Article> search(ArticleFilter filter, Pageable pageable) {
 		logger.info("receive article search request filter: {}");
-		if (filter.isMine()){
-		    filter.setUid(getLoginUID());
-        }
+		if (filter.isMine()) {
+			filter.setUid(getLoginUID());
+		}
 		return articleService.search(filter, pageable);
 	}
 
@@ -81,15 +82,18 @@ public class ArticleController extends BaseController {
 
 	@GetMapping(value = "view/{id}")
 	public void view(@PathVariable(name = "id") String id, HttpServletRequest request, HttpServletResponse response)
-			throws IOException, TemplateException {
+			throws IOException, TemplateException, IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException {
 
 		Configuration configuration = freeMarkerConfigurer.getConfiguration();
 		Template template = configuration.getTemplate("preview.html");
 
 		Article article = articleService.detail(id);
+		Map<String, String> param = org.apache.commons.beanutils.BeanUtils.describe(article);
+		param.put("created", DateFormatUtils.format(article.getCreated(), "yyyy-MM-dd"));
 
 		response.setContentType("text/html; charset=utf-8");
-		template.process(article, response.getWriter());
+		template.process(param, response.getWriter());
 	}
 
 	@GetMapping(value = "detail")
@@ -115,13 +119,13 @@ public class ArticleController extends BaseController {
 	public ServerResponse create(@RequestBody Article article) {
 		article.setCreaterId(getLoginUID());
 		article.setCreater(getLoginUname());
-        if (StringUtils.isBlank(article.getThumbUrl())&&StringUtils.isNotBlank(article.getMediaId())){
-            logger.info("generate thumbUrl by mediaId");
-            AttachEntity attachEntity = attachRepository.findOne(article.getMediaId());
-            String filename = attachEntity.getFilename();
-            String thumbUrl = wechatProperties.getImageServerUrl()+"/"+filename;
-            article.setThumbUrl(thumbUrl);
-        }
+		if (StringUtils.isBlank(article.getThumbUrl()) && StringUtils.isNotBlank(article.getMediaId())) {
+			logger.info("generate thumbUrl by mediaId");
+			AttachEntity attachEntity = attachRepository.findOne(article.getMediaId());
+			String filename = attachEntity.getFilename();
+			String thumbUrl = wechatProperties.getImageServerUrl() + "/" + filename;
+			article.setThumbUrl(thumbUrl);
+		}
 		if (StringUtils.isNotBlank(article.getId())) {
 			this.modify(article);
 		} else {
