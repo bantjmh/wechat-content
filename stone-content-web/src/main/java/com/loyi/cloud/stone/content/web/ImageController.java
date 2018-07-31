@@ -13,6 +13,8 @@ import com.loyi.cloud.stone.content.entity.AttachEntity;
 import com.loyi.cloud.stone.content.model.ServerResponse;
 import com.loyi.cloud.stone.content.model.vo.ImageVo;
 
+import com.loyi.cloud.wecaht.platform.domain.WechatImageMessage;
+import com.loyi.cloud.wechat.platform.sdk.client.IBatchFeignService;
 import com.loyi.stone.content.api.domain.Attach;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +37,13 @@ public class ImageController extends BaseController {
 	@Autowired
 	AttachService attachService;
 
+	@Autowired
+	IBatchFeignService iBatchFeignService;
 
 	@ResponseBody
 	// @RequiresUser
 	@PostMapping(value = "upload")
-	public Map<String, String> upload(@RequestParam(value = "file", required = false) MultipartFile file)
+	public Map<String, String> upload(@RequestParam(value = "file", required = false) MultipartFile file,String appId)
 			throws IOException {
 		String uid = getLoginUID();
 		String id = attachService.upload(file,uid);
@@ -48,8 +52,11 @@ public class ImageController extends BaseController {
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("mediaId", id);
 		result.put("filename",fileName);
+//		fileName = "0ffe01f0-61ca-4cbf-b5a7-b8182fceb866.jpg";
+		WechatImageMessage wechatImageMessage = iBatchFeignService.upImageUpload(fileName,appId);
+		logger.info("从微信模块获取图片在微信服务器的url: {}",wechatImageMessage.getWechatImageUrl());
+		result.put("wechat_url",wechatImageMessage.getWechatImageUrl());
 		return result;
-
 	}
 
 	@ResponseBody
