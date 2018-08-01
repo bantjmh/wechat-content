@@ -1,22 +1,24 @@
 package com.loyi.cloud.stone.content.web;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.OutputStream;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
 
 import com.loyi.cloud.stone.content.entity.AttachEntity;
 import com.loyi.cloud.stone.content.model.ServerResponse;
+import com.loyi.cloud.stone.content.model.param.UploadParam;
 import com.loyi.cloud.stone.content.model.vo.ImageVo;
 
 import com.loyi.cloud.wecaht.platform.domain.WechatImageMessage;
 import com.loyi.cloud.wechat.platform.sdk.client.IBatchFeignService;
 import com.loyi.stone.content.api.domain.Attach;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.loyi.cloud.stone.content.dao.AttachRepository;
 import com.loyi.cloud.stone.content.service.AttachService;
+import sun.misc.BASE64Decoder;
 
 @Controller
 @RequestMapping(value = "image")
@@ -52,10 +55,11 @@ public class ImageController extends BaseController {
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("mediaId", id);
 		result.put("filename",fileName);
-//		fileName = "0ffe01f0-61ca-4cbf-b5a7-b8182fceb866.jpg";
-		WechatImageMessage wechatImageMessage = iBatchFeignService.upImageUpload(fileName,appId);
-		logger.info("从微信模块获取图片在微信服务器的url: {}",wechatImageMessage.getWechatImageUrl());
-		result.put("wechat_url",wechatImageMessage.getWechatImageUrl());
+
+//		WechatImageMessage wechatImageMessage = iBatchFeignService.upImageUpload(fileName,appId);
+//		logger.info("从微信模块获取图片在微信服务器的url: {}",wechatImageMessage.getWechatImageUrl());
+//
+//		result.put("wechat_url",wechatImageMessage.getWechatImageUrl());
 		return result;
 	}
 
@@ -97,6 +101,22 @@ public class ImageController extends BaseController {
 		return asseamblyAttach(entity);
 	}
 
+	@PostMapping(value = "upload/base64")
+	public Map<String, String> upLoadImage(@RequestBody UploadParam param){
+//		System.out.print(param.getBaseString());
+		String uid = getLoginUID();
+		String baseStr = param.getBaseString();
+		if (!param.getBaseString().startsWith("/9j")){
+			baseStr = baseStr.substring(baseStr.indexOf("/9j"));
+		}
+		AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid);
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("attachId",attachEntity.getId());
+		result.put("filename",attachEntity.getFilename());
+		result.put("imageurl",wechatProperties.getImageServerUrl()+"/"+attachEntity.getFilename());
+		return result;
+	}
+
 	private Attach asseamblyAttach(AttachEntity attachEntity){
 		Attach attach = new Attach();
 		attach.setId(attachEntity.getId());
@@ -116,6 +136,4 @@ public class ImageController extends BaseController {
 		attach.setModel(attachEntity.getModel());
 		return attach;
 	}
-
-
 }

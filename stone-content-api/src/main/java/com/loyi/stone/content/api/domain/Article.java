@@ -72,6 +72,8 @@ public class Article {
 
     private String contentModel;
 
+    private String thumbImageFileName;
+
     public String getMediaId() {
         return mediaId;
     }
@@ -238,5 +240,13 @@ public class Article {
 
     public void setContentModel(String contentModel) {
         this.contentModel = contentModel;
+    }
+
+    public String getThumbImageFileName() {
+        return thumbImageFileName;
+    }
+
+    public void setThumbImageFileName(String thumbImageFileName) {
+        this.thumbImageFileName = thumbImageFileName;
     }
 }

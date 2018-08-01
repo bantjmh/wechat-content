@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.loyi.cloud.stone.content.dao.AttachRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -60,6 +61,9 @@ public class ArticleController extends BaseController {
 	@Autowired
 	ArticleSendRecordRepository articleSendRecordRepository;
 
+	@Autowired
+	AttachRepository attachRepository;
+
 	@RequiresUser
 	@GetMapping(value = "search")
 	public Page<Article> search(ArticleFilter filter, Pageable pageable) {
@@ -99,6 +103,8 @@ public class ArticleController extends BaseController {
 	@GetMapping(value = "detail")
 	public Article detail(String articleId) {
 		Article article = articleService.detail(articleId);
+		AttachEntity attachEntity = attachRepository.findOne(article.getMediaId());
+		article.setThumbImageFileName(attachEntity.getFilename());
 		return article;
 	}
 

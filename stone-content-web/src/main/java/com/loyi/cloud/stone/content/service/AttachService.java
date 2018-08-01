@@ -1,9 +1,6 @@
 package com.loyi.cloud.stone.content.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +14,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.coobird.thumbnailator.Thumbnails;
+import sun.misc.BASE64Decoder;
 
 @Service
 public class AttachService {
@@ -26,6 +24,19 @@ public class AttachService {
 
 	@Autowired
     WechatProperties properties;
+
+	public AttachEntity uploadBase64(String base64,String uid){
+		//默认png
+		String id = UUID.randomUUID().toString();
+		String filename = id+".png";
+		File folder = new File(properties.getFilePath());
+		if (!folder.exists()) {
+			folder.mkdirs();
+		}
+		generateImage(base64);
+		AttachEntity entity = saveAttach(uid, id, filename);
+		return entity;
+	}
 
 	public String upload(MultipartFile file,String uid) throws IOException {
 
@@ -47,14 +58,19 @@ public class AttachService {
 			FileCopyUtils.copy(file.getInputStream(), os);
 		}
 
+		saveAttach(uid, id, filename);
+
+		return id;
+	}
+
+	private AttachEntity saveAttach(String uid, String id, String filename) {
 		AttachEntity e = new AttachEntity();
 		e.setId(id);
 		e.setFilename(filename);
 		e.setUid(uid);
 
 		attachRepository.save(e);
-
-		return id;
+		return e;
 	}
 
 	public void get(String code, HttpServletResponse response) throws IOException {
@@ -78,5 +94,34 @@ public class AttachService {
 		}
 	}
 
-
+	//base64字符串转化成图片
+	public String generateImage(String imgStr)
+	{   //对字节数组字符串进行Base64解码并生成图片
+		if (imgStr == null) //图像数据为空
+			return "";
+		BASE64Decoder decoder = new BASE64Decoder();
+		try
+		{
+			//Base64解码
+			byte[] b = decoder.decodeBuffer(imgStr);
+			for(int i=0;i<b.length;++i)
+			{
+				if(b[i]<0)
+				{//调整异常数据
+					b[i]+=256;
+				}
+			}
+			//生成jpeg图片
+			String imgFilePath = properties.getFilePath() + File.separator+ UUID.randomUUID().toString()+".png";//新生成的图片
+			OutputStream out = new FileOutputStream(imgFilePath);
+			out.write(b);
+			out.flush();
+			out.close();
+			return imgFilePath;
+		}
+		catch (Exception e)
+		{
+			return "";
+		}
+	}
 }
