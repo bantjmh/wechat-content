@@ -31,13 +31,14 @@ public class AttachService {
 
 	public AttachEntity uploadBase64(String base64,String uid){
 		//默认png
+        
 		String id = UUID.randomUUID().toString();
 		String filename = id+".png";
 		File folder = new File(properties.getFilePath());
 		if (!folder.exists()) {
 			folder.mkdirs();
 		}
-		String imagePath = generateImage(base64);
+		String imagePath = generateImage(base64,filename);
         logger.info("genertate image success imagePath : {}",imagePath);
 		AttachEntity entity = saveAttach(uid, id, filename);
 		return entity;
@@ -100,7 +101,7 @@ public class AttachService {
 	}
 
 	//base64字符串转化成图片
-	public String generateImage(String imgStr)
+	public String generateImage(String imgStr,String filename)
 	{   //对字节数组字符串进行Base64解码并生成图片
 		if (imgStr == null) //图像数据为空
 			return "";
@@ -117,7 +118,7 @@ public class AttachService {
 				}
 			}
 			//生成jpeg图片
-			String imgFilePath = properties.getFilePath() + File.separator+ UUID.randomUUID().toString()+".png";//新生成的图片
+			String imgFilePath = properties.getFilePath() + File.separator+ filename;//新生成的图片
 			OutputStream out = new FileOutputStream(imgFilePath);
 			out.write(b);
 			out.flush();
