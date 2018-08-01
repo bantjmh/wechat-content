@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.loyi.cloud.stone.content.config.WechatProperties;
 import com.loyi.cloud.stone.content.dao.AttachRepository;
 import com.loyi.cloud.stone.content.entity.AttachEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -18,6 +20,8 @@ import sun.misc.BASE64Decoder;
 
 @Service
 public class AttachService {
+
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
     AttachRepository attachRepository;
@@ -33,7 +37,8 @@ public class AttachService {
 		if (!folder.exists()) {
 			folder.mkdirs();
 		}
-		generateImage(base64);
+		String imagePath = generateImage(base64);
+        logger.info("genertate image success imagePath : {}",imagePath);
 		AttachEntity entity = saveAttach(uid, id, filename);
 		return entity;
 	}
