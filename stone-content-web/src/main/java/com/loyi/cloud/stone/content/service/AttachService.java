@@ -1,13 +1,16 @@
 package com.loyi.cloud.stone.content.service;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import com.loyi.cloud.stone.content.config.WechatProperties;
 import com.loyi.cloud.stone.content.dao.AttachRepository;
 import com.loyi.cloud.stone.content.entity.AttachEntity;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +34,54 @@ public class AttachService {
 
 	public AttachEntity uploadBase64(String base64,String uid){
 		//默认png
-        
+
 		String id = UUID.randomUUID().toString();
 		String filename = id+".png";
-		File folder = new File(properties.getFilePath());
-		if (!folder.exists()) {
-			folder.mkdirs();
-		}
+		checkFileExsit();
 		String imagePath = generateImage(base64,filename);
         logger.info("genertate image success imagePath : {}",imagePath);
 		AttachEntity entity = saveAttach(uid, id, filename);
 		return entity;
+	}
+
+	public AttachEntity uploadThumbBase64(String base64,String uid,double scale){
+		String id = UUID.randomUUID().toString();
+		String filename = id+".png";
+		checkFileExsit();
+		String imagePath = null;
+		try {
+			imagePath = generateThumb(base64,filename,scale);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		filename = imagePath.substring(imagePath.lastIndexOf("/")+1);
+		logger.info("genertate image success imagePath : {}",imagePath);
+		AttachEntity entity = saveAttach(uid, id, filename);
+		return entity;
+	}
+
+	public String generateThumb(String base64,String filename,double scale) throws IOException {
+		String imagePath = generateImage(base64,filename);
+		File formPic = new File(imagePath);
+		String id = filename.substring(0,filename.lastIndexOf('.'));
+		BufferedImage image = ImageIO.read(formPic);
+		int imageWidth = image.getWidth();
+		String toPicPath = properties.getFilePath() + File.separator+id+"_thumb.png";
+		File toPic = new File(toPicPath);
+		int width = imageWidth;
+		int height = (int) (imageWidth * scale);
+		Thumbnails.of(formPic).sourceRegion(Positions.CENTER,width,height).size(width,height).toFile(toPic);
+		if (formPic.exists()){
+			formPic.delete();
+		}
+		return toPicPath;
+	}
+
+	private void checkFileExsit() {
+		File folder = new File(properties.getFilePath());
+		if (!folder.exists()) {
+			folder.mkdirs();
+		}
 	}
 
 	public String upload(MultipartFile file,String uid) throws IOException {
@@ -50,10 +90,7 @@ public class AttachService {
 		String originalFilename = file.getOriginalFilename();
 		String type = originalFilename.substring(originalFilename.lastIndexOf("."));
 		String filename = id + type;
-		File folder = new File(properties.getFilePath());
-		if (!folder.exists()) {
-			folder.mkdirs();
-		}
+		checkFileExsit();
 
 		File target = new File(properties.getFilePath() + File.separator + filename);
 

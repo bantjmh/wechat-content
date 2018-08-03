@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.loyi.cloud.stone.content.entity.AttachEntity;
 import com.loyi.cloud.stone.content.model.ServerResponse;
 import com.loyi.cloud.stone.content.model.param.UploadParam;
+import com.loyi.cloud.stone.content.model.param.UploadThumbParam;
 import com.loyi.cloud.stone.content.model.vo.ImageVo;
 
 import com.loyi.cloud.wecaht.platform.domain.WechatImageMessage;
@@ -105,17 +106,34 @@ public class ImageController extends BaseController {
 	public Map<String, String> upLoadImage(@RequestBody UploadParam param){
 //		System.out.print(param.getBaseString());
 		String uid = getLoginUID();
-		String baseStr = param.getBaseString();
-		if (!param.getBaseString().startsWith("/9j")){
-			baseStr = baseStr.substring(baseStr.indexOf("/9j"));
-		}
-		AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid);
+        String baseStr = getUsefulBase64(param);
+        AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid);
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("attachId",attachEntity.getId());
 		result.put("filename",attachEntity.getFilename());
 		result.put("imageurl",wechatProperties.getImageServerUrl()+"/"+attachEntity.getFilename());
 		return result;
 	}
+
+    @PostMapping(value = "upload/thumbase64")
+    public Map<String,String> uploadThumb(@RequestBody UploadThumbParam param){
+        String uid = getLoginUID();
+        String baseStr = getUsefulBase64(param);
+        AttachEntity attachEntity = attachService.uploadThumbBase64(baseStr,uid,param.getScale());
+        Map<String,String> result = new HashMap<>();
+        result.put("attachId",attachEntity.getId());
+        result.put("filename",attachEntity.getFilename());
+        result.put("imageurl",wechatProperties.getImageServerUrl()+"/"+attachEntity.getFilename());
+        return result;
+    }
+
+    private String getUsefulBase64(@RequestBody UploadParam param) {
+        String baseStr = param.getBaseString();
+        if (!param.getBaseString().startsWith("/9j")){
+            baseStr = baseStr.substring(baseStr.indexOf("/9j"));
+        }
+        return baseStr;
+    }
 
 	private Attach asseamblyAttach(AttachEntity attachEntity){
 		Attach attach = new Attach();
