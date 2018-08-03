@@ -108,10 +108,7 @@ public class ImageController extends BaseController {
 		String uid = getLoginUID();
         String baseStr = getUsefulBase64(param);
         AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid);
-		Map<String, String> result = new HashMap<String, String>();
-		result.put("attachId",attachEntity.getId());
-		result.put("filename",attachEntity.getFilename());
-		result.put("imageurl",wechatProperties.getImageServerUrl()+"/"+attachEntity.getFilename());
+        Map<String, String> result = getResultMap(attachEntity);
 		return result;
 	}
 
@@ -120,6 +117,19 @@ public class ImageController extends BaseController {
         String uid = getLoginUID();
         String baseStr = getUsefulBase64(param);
         AttachEntity attachEntity = attachService.uploadThumbBase64(baseStr,uid,param.getScale());
+        Map<String, String> result = getResultMap(attachEntity);
+        return result;
+    }
+
+    @GetMapping(value = "tailored")
+    public Map<String,String> tailoredImage(@RequestParam String attachId,@RequestParam double scale) throws IOException {
+        String uid = getLoginUID();
+        AttachEntity attachEntity = attachService.tailoredImage(attachId,uid,scale);
+        Map<String, String> result = getResultMap(attachEntity);
+        return result;
+    }
+
+    private Map<String, String> getResultMap(AttachEntity attachEntity) {
         Map<String,String> result = new HashMap<>();
         result.put("attachId",attachEntity.getId());
         result.put("filename",attachEntity.getFilename());

@@ -60,6 +60,24 @@ public class AttachService {
 		return entity;
 	}
 
+
+	public AttachEntity tailoredImage(String attachId,String uid,double scale) throws IOException {
+	    AttachEntity attachEntity = attachRepository.findOne(attachId);
+	    String fileName = attachEntity.getFilename();
+	    File fromPic = new File(properties.getFilePath() + File.separator+fileName);
+	    String id = UUID.randomUUID().toString();
+	    String filename = id + "_thumb.png";
+        BufferedImage image = ImageIO.read(fromPic);
+        int imageWidth = image.getWidth();
+        String toPicPath = properties.getFilePath() + File.separator+ id+"_thumb.png";
+        File toPic = new File(toPicPath);
+        int width = imageWidth;
+        int height = (int) (imageWidth * scale);
+        Thumbnails.of(fromPic).sourceRegion(Positions.CENTER,width,height).size(width,height).toFile(toPic);
+        AttachEntity tailAttachEntity = saveAttach(uid,id,filename);
+        return tailAttachEntity;
+    }
+
 	public String generateThumb(String base64,String filename,double scale) throws IOException {
 		String imagePath = generateImage(base64,filename);
 		File formPic = new File(imagePath);
