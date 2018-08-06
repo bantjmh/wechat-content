@@ -1,15 +1,22 @@
 package com.loyi.stone.content.api.domain;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.Date;
+
+
 
 /**
  * Created by fq on 2018/7/6.
  */
 public class Article {
+
     private String id;
 
+    @NotNull(message = "标题不能为空")
     private String title;
 
+    @NotNull(message = "内容不能为空")
     private String content;
 
     /**
@@ -27,6 +34,7 @@ public class Article {
      */
     private String thumbMediaId;
 
+    @NotNull(message = "作者名必填")
     private String author;
 
     /**
@@ -57,7 +65,7 @@ public class Article {
     private String createrId;
 
     private String creater;
-
+    @NotNull(message = "必填封面图片的id")
     private String mediaId;
 
     private Date updated;

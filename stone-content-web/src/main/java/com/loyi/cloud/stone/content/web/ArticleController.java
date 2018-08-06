@@ -15,6 +15,7 @@ import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +35,7 @@ import com.loyi.cloud.stone.content.service.ArticleService;
 import com.loyi.cloud.stone.content.service.AuthorizerTokenManager;
 import com.loyi.stone.content.api.domain.Article;
 import com.loyi.stone.content.api.domain.ArticleSendRecord;
+
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -122,7 +124,7 @@ public class ArticleController extends BaseController {
 
 	@RequiresUser
 	@PostMapping(value = "create")
-	public ServerResponse create(@RequestBody Article article) {
+	public ServerResponse create(@RequestBody @Validated Article article) {
 		article.setCreaterId(getLoginUID());
 		article.setCreater(getLoginUname());
 		if (StringUtils.isBlank(article.getThumbUrl()) && StringUtils.isNotBlank(article.getMediaId())) {
@@ -157,6 +159,7 @@ public class ArticleController extends BaseController {
 		articleService.update(param);
 	}
 
+	
 	public static class Preview {
 		private String url;
 

@@ -15,8 +15,8 @@ public class WechatProperties {
 //
 	private String imageServerUrl = "http://image-open.loyi.cn";
 
-//	private String filePath = "E://resource";
-	private String filePath = "/var/file";
+	private String filePath = "E://resource";
+//	private String filePath = "/var/file";
 
 	private String apiServerUrl = "http://open.loyi.cn";
 
@@ -44,7 +44,7 @@ public class WechatProperties {
         this.apiServerUrl = apiServerUrl;
     }
 
-    //	public String getAppid() {
+	//	public String getAppid() {
 //		return appid;
 //	}
 //
