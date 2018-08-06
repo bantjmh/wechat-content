@@ -148,6 +148,9 @@ public class ArticleController extends BaseController {
 	@RequiresUser
 	@PostMapping(value = "modify")
 	public void modify(@RequestBody Article article) {
+	    if (StringUtils.isBlank(article.getId())){
+	        throw new RuntimeException("Id不能为空");
+        }
 		articleService.modify(article);
 	}
 
@@ -159,7 +162,7 @@ public class ArticleController extends BaseController {
 		articleService.update(param);
 	}
 
-	
+
 	public static class Preview {
 		private String url;
 
