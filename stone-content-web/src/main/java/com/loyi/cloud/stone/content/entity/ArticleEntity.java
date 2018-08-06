@@ -90,7 +90,7 @@ public class ArticleEntity {
 	 * 未通过 -1
 	 */
 	@Column(columnDefinition = "tinyint default 1")
-	private int checkStatus;
+	private int checkStatus = 1;
 
 	private double longtitude;
 
