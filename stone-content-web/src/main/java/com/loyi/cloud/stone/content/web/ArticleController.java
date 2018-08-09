@@ -2,12 +2,16 @@ package com.loyi.cloud.stone.content.web;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.loyi.cloud.stone.content.dao.AttachRepository;
+import com.loyi.cloud.stone.content.service.ArticleCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -66,6 +70,9 @@ public class ArticleController extends BaseController {
 	@Autowired
 	AttachRepository attachRepository;
 
+	@Autowired
+	ArticleCache articleCache;
+
 	@RequiresUser
 	@GetMapping(value = "search")
 	public Page<Article> search(ArticleFilter filter, Pageable pageable) {
@@ -102,6 +109,43 @@ public class ArticleController extends BaseController {
 		template.process(param, response.getWriter());
 	}
 
+
+	@PostMapping(value = "create/preview")
+	public Preview preCreatePreview(@RequestBody @Validated Article article){
+		Preview preview = new Preview();
+		String url = wechatProperties.getApiServerUrl();
+		String articleKey = UUID.randomUUID().toString();
+		articleCache.saveArticle(articleKey,article);
+		url = url + "/api/stone-content/article/create/view/" + articleKey;
+		preview.setUrl(url);
+		preview.setKey(articleKey);
+		return preview;
+	}
+
+
+	@GetMapping(value = "create/view/{key}")
+	public void preCreateView(@PathVariable(name = "key") String key, HttpServletResponse response) throws IOException, TemplateException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+		Configuration configuration = freeMarkerConfigurer.getConfiguration();
+		Template template = configuration.getTemplate("preview.html");
+		Article article = articleCache.getArticle(key);
+		if (article == null){
+			return;
+		}
+		Map<String, String> param = org.apache.commons.beanutils.BeanUtils.describe(article);
+		param.put("created", DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
+		response.setContentType("text/html; charset=utf-8");
+		template.process(param, response.getWriter());
+//		Map<String,String> param = new HashMap<>();
+//		param.put("created",DateFormatUtils.format(new Date(),"yyyy-MM-dd"));
+//		param.put("title",article.getTitle());
+//		param.put("author",article.getAuthor());
+//		param.put("content",article.getContent());
+//		Configuration configuration = freeMarkerConfigurer.getConfiguration();
+//		Template template = configuration.getTemplate("preview.html");
+//		response.setContentType("text/html; charset=utf-8");
+//		template.process(param, response.getWriter());
+	}
+
 	@GetMapping(value = "detail")
 	public Article detail(String articleId) {
 		Article article = articleService.detail(articleId);
@@ -110,6 +154,7 @@ public class ArticleController extends BaseController {
 		return article;
 	}
 
+	@Deprecated
 	@PostMapping(value = "save/record")
 	public void saveRecord(@RequestBody ArticleSendRecord articleSendRecord) {
 		ArticleSendRecordEntity entity = assemblyEntity(articleSendRecord);
@@ -125,6 +170,38 @@ public class ArticleController extends BaseController {
 	@RequiresUser
 	@PostMapping(value = "create")
 	public ServerResponse create(@RequestBody @Validated Article article) {
+		saveArticle(article);
+		article.setContent("");
+		article.setCreaterId("");
+		return ServerResponse.createBySuccess(article);
+//		article.setCreaterId(getLoginUID());
+//		article.setCreater(getLoginUname());
+//		if (StringUtils.isBlank(article.getThumbUrl()) && StringUtils.isNotBlank(article.getMediaId())) {
+//			logger.info("generate thumbUrl by mediaId");
+//			AttachEntity attachEntity = attachRepository.findOne(article.getMediaId());
+//			String filename = attachEntity.getFilename();
+//			String thumbUrl = wechatProperties.getImageServerUrl() + "/" + filename;
+//			article.setThumbUrl(thumbUrl);
+//		}
+//		if (StringUtils.isNotBlank(article.getId())) {
+//			this.modify(article);
+//		} else {
+//			articleService.add(article);
+//		}
+//
+
+	}
+
+	@GetMapping(value = "create/key")
+	public void createByKey(String articleKey){
+		Article article = articleCache.getArticle(articleKey);
+		if (article == null){
+			throw new RuntimeException("预览时间超过30分钟");
+		}
+		saveArticle(article);
+	}
+
+	public void saveArticle(Article article){
 		article.setCreaterId(getLoginUID());
 		article.setCreater(getLoginUname());
 		if (StringUtils.isBlank(article.getThumbUrl()) && StringUtils.isNotBlank(article.getMediaId())) {
@@ -139,10 +216,6 @@ public class ArticleController extends BaseController {
 		} else {
 			articleService.add(article);
 		}
-
-		article.setContent("");
-		article.setCreaterId("");
-		return ServerResponse.createBySuccess(article);
 	}
 
 	@RequiresUser
@@ -165,6 +238,15 @@ public class ArticleController extends BaseController {
 
 	public static class Preview {
 		private String url;
+		private String key;
+
+		public String getKey() {
+			return key;
+		}
+
+		public void setKey(String key) {
+			this.key = key;
+		}
 
 		public String getUrl() {
 			return url;
