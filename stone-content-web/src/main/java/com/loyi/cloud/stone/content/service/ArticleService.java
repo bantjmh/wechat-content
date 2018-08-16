@@ -65,8 +65,13 @@ public class ArticleService {
 		if (e == null) {
 			return;
 		}
+		String creater = e.getCreater();
+		String createrId = e.getCreaterId();
 		BeanUtils.copyProperties(ar, e, "created");
 		e.setUpdated(new Date());
+		e.setCheckStatus(1);
+		e.setCreater(creater);
+		e.setCreaterId(createrId);
 		articleRepository.save(e);
 	}
 
@@ -98,7 +103,10 @@ public class ArticleService {
 		List<Article> list = new ArrayList<>();
 		for (ArticleEntity e : content) {
 			e.setCreaterId("");
-			list.add(this.toModel(e));
+			Article article = this.toModel(e);
+			article.setContent("");
+			article.setContentModel("");
+			list.add(article);
 		}
 		return new PageImpl<>(list, pageable, page.getTotalElements());
 	}
