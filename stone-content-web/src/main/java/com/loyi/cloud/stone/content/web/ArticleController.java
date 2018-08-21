@@ -3,7 +3,6 @@ package com.loyi.cloud.stone.content.web;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -11,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.loyi.cloud.stone.content.dao.AttachRepository;
+import com.loyi.cloud.stone.content.entity.DraftEntity;
+import com.loyi.cloud.stone.content.model.param.DraftParam;
 import com.loyi.cloud.stone.content.service.ArticleCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -72,6 +73,8 @@ public class ArticleController extends BaseController {
 
 	@Autowired
 	ArticleCache articleCache;
+
+
 
 	@RequiresUser
 	@GetMapping(value = "search")
@@ -174,22 +177,6 @@ public class ArticleController extends BaseController {
 		article.setContent("");
 		article.setCreaterId("");
 		return ServerResponse.createBySuccess(article);
-//		article.setCreaterId(getLoginUID());
-//		article.setCreater(getLoginUname());
-//		if (StringUtils.isBlank(article.getThumbUrl()) && StringUtils.isNotBlank(article.getMediaId())) {
-//			logger.info("generate thumbUrl by mediaId");
-//			AttachEntity attachEntity = attachRepository.findOne(article.getMediaId());
-//			String filename = attachEntity.getFilename();
-//			String thumbUrl = wechatProperties.getImageServerUrl() + "/" + filename;
-//			article.setThumbUrl(thumbUrl);
-//		}
-//		if (StringUtils.isNotBlank(article.getId())) {
-//			this.modify(article);
-//		} else {
-//			articleService.add(article);
-//		}
-//
-
 	}
 
 	@GetMapping(value = "create/key")
@@ -204,6 +191,7 @@ public class ArticleController extends BaseController {
 	public void saveArticle(Article article){
 		article.setCreaterId(getLoginUID());
 		article.setCreater(getLoginUname());
+		article.setCheckStatus(1);
 		if (StringUtils.isBlank(article.getThumbUrl()) && StringUtils.isNotBlank(article.getMediaId())) {
 			logger.info("generate thumbUrl by mediaId");
 			AttachEntity attachEntity = attachRepository.findOne(article.getMediaId());
@@ -235,6 +223,34 @@ public class ArticleController extends BaseController {
 		articleService.update(param);
 	}
 
+	@RequiresUser
+	@PostMapping(value = "save/draft")
+	public DraftEntity saveDraft(@RequestBody @Validated DraftParam param){
+		String uid = getLoginUID();
+		return articleService.saveDraft(param,uid);
+	}
+
+	@RequiresUser
+	@GetMapping(value = "delete/draft")
+	public void deleteDraft(){
+		String uid = getLoginUID();
+		articleService.deleteDraft(uid);
+	}
+
+	@RequiresUser
+	@PostMapping(value = "update/draft")
+	public void updateDraft(@RequestBody @Validated DraftParam param){
+		String uid = getLoginUID();
+		articleService.updateDraft(param,uid);
+	}
+
+	@RequiresUser
+	@GetMapping(value = "draft")
+	public DraftEntity getDraft(){
+		String uid = getLoginUID();
+		DraftEntity draftEntity = articleService.selectDraftByUid(uid);
+		return draftEntity;
+	}
 
 	public static class Preview {
 		private String url;

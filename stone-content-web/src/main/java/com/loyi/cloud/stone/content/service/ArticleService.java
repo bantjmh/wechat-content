@@ -1,11 +1,14 @@
 package com.loyi.cloud.stone.content.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import javax.transaction.Transactional;
 
-import com.loyi.cloud.stone.content.dao.ArticleRepository;
+import com.loyi.cloud.stone.content.dao.*;
+import com.loyi.cloud.stone.content.entity.DraftEntity;
 import com.loyi.cloud.stone.content.filter.ArticleFilter;
+import com.loyi.cloud.stone.content.model.param.DraftParam;
 import com.loyi.stone.content.api.domain.Article;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,9 +25,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.loyi.cloud.stone.content.config.WechatProperties;
-import com.loyi.cloud.stone.content.dao.ArticleGroupRelRepository;
-import com.loyi.cloud.stone.content.dao.ArticleSendRecordRepository;
-import com.loyi.cloud.stone.content.dao.AttachRepository;
 import com.loyi.cloud.stone.content.entity.ArticleEntity;
 import com.loyi.cloud.stone.content.entity.ArticleGroupRelEntity;
 import com.loyi.cloud.stone.content.filter.ArticleFilterSpec;
@@ -52,6 +52,9 @@ public class ArticleService {
 
 	@Autowired
 	ArticleSendRecordRepository articleSendRecordRepository;
+
+	@Autowired
+	DraftRepository draftRepository;
 
 	public void add(Article ar) {
 		ar.setCreated(new Date());
@@ -135,6 +138,55 @@ public class ArticleService {
 	public void update(AuditVo param) {
 		articleRepository.updateStatus(param.getId(), param.getCheckStatus());
 	}
+
+	public DraftEntity selectDraftByUid(String uid){
+		return draftRepository.findOne(uid);
+	}
+
+	public void deleteDraft(String uid){
+		DraftEntity draftEntity = draftRepository.findOne(uid);
+		if (draftEntity != null){
+			draftRepository.delete(uid);
+		}
+	}
+
+	public DraftEntity updateDraft(DraftParam param,String uid){
+		DraftEntity draftEntity = draftRepository.findOne(uid);
+		try {
+			if (draftEntity != null){
+				org.apache.commons.beanutils.BeanUtils.copyProperties(draftEntity,param);
+				draftEntity.setUpdated(new Date());
+				draftRepository.save(draftEntity);
+			}else {
+				saveDraft(param,uid);
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return draftEntity;
+	}
+
+	public DraftEntity saveDraft(DraftParam param,String uid){
+
+		DraftEntity draftEntity = new DraftEntity();
+		try {
+			org.apache.commons.beanutils.BeanUtils.copyProperties(draftEntity,param);
+			Date now = new Date();
+			draftEntity.setCreated(now);
+			draftEntity.setUpdated(now);
+			draftEntity.setUid(uid);
+			draftRepository.save(draftEntity);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		return draftEntity;
+	}
+
 
 
 }
