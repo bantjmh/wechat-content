@@ -44,7 +44,8 @@ public class ArticleFilterSpec implements Specification<ArticleEntity> {
 			predicate = cb.and(predicate, root.get("id").in(this.getArticleIds()));
 		}
 		if(filter.getCheckStatus() != 0){
-			predicate = cb.and(predicate,cb.equal(root.get("checkStatus").as(Integer.class),filter.getCheckStatus()));
+//			predicate = cb.and(predicate,cb.equal(root.get("checkStatus").as(Integer.class),filter.getCheckStatus()));
+			predicate = cb.and(predicate,cb.greaterThanOrEqualTo(root.get("checkStatus").as(Integer.class),filter.getCheckStatus()));
 		}
 		if(filter.isMine()){
 			predicate = cb.and(predicate,cb.equal(root.get("createrId").as(String.class),filter.getUid()));
