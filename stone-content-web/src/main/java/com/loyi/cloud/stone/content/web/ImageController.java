@@ -17,6 +17,7 @@ import com.loyi.cloud.stone.content.model.vo.ImageVo;
 import com.loyi.cloud.wecaht.platform.domain.WechatImageMessage;
 import com.loyi.cloud.wechat.platform.sdk.client.IBatchFeignService;
 import com.loyi.stone.content.api.domain.Attach;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +103,11 @@ public class ImageController extends BaseController {
 		return asseamblyAttach(entity);
 	}
 
+	/**
+	 * 不经过前端裁剪工具裁剪上传内容图片
+	 * @param param
+	 * @return
+	 */
 	@PostMapping(value = "upload/base64")
 	public Map<String, String> upLoadImage(@RequestBody UploadParam param){
 //		System.out.print(param.getBaseString());
@@ -112,12 +118,43 @@ public class ImageController extends BaseController {
 		return result;
 	}
 
+	/**
+	 * 不经过前端裁剪工具裁剪上传封面图片，服务器会进行一次裁剪
+	 * @param param
+	 * @return
+	 */
     @PostMapping(value = "upload/thumbase64")
     public Map<String,String> uploadThumb(@RequestBody UploadThumbParam param){
         String uid = getLoginUID();
         String baseStr = getUsefulBase64(param);
         AttachEntity attachEntity = attachService.uploadThumbBase64(baseStr,uid,param.getScale());
         Map<String, String> result = getResultMap(attachEntity);
+        return result;
+    }
+
+	/**
+	 * 经过裁剪工具裁剪上传图片的接口，区别主要在于上传的base64字符串的类型不同
+	 * @param param
+	 * @return
+	 */
+	@PostMapping(value = "upload/tailored/thumb")
+	public Map<String,String> uploadTailoredThumb(@RequestBody UploadParam param){
+		String uid = getLoginUID();
+		String baseStr = param.getBaseString();
+		AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid);
+		Map<String, String> result = getResultMap(attachEntity);
+		return result;
+	}
+
+    @GetMapping(value = "base64")
+	public Map<String,String> getBase64StringBy(String mediaId){
+	    if (StringUtils.isBlank(mediaId)){
+	        throw new RuntimeException("mediaId 不能为空");
+        }
+        String base64Str = attachService.getBase64StringBy(mediaId);
+        Map<String,String> result = new HashMap<>();
+        result.put("base64",base64Str);
+        result.put("mediaId",mediaId);
         return result;
     }
 
@@ -128,6 +165,8 @@ public class ImageController extends BaseController {
         Map<String, String> result = getResultMap(attachEntity);
         return result;
     }
+
+
 
     private Map<String, String> getResultMap(AttachEntity attachEntity) {
         Map<String,String> result = new HashMap<>();
