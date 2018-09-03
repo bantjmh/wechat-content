@@ -33,11 +33,11 @@ public class AttachService {
 	@Autowired
     WechatProperties properties;
 
-	public AttachEntity uploadBase64(String base64,String uid){
+	public AttachEntity uploadBase64(String base64,String uid,String imageType){
 		//默认png
 
 		String id = UUID.randomUUID().toString();
-		String filename = id+".png";
+		String filename = id+"."+imageType;
 		checkFileExsit();
 		String imagePath = generateImage(base64,filename);
         logger.info("genertate image success imagePath : {}",imagePath);

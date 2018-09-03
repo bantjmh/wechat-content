@@ -113,7 +113,11 @@ public class ImageController extends BaseController {
 //		System.out.print(param.getBaseString());
 		String uid = getLoginUID();
         String baseStr = getUsefulBase64(param);
-        AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid);
+        String imageType = "png";
+        if (StringUtils.isNotBlank(param.getImageType())){
+			imageType = param.getImageType();
+		}
+        AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid,imageType);
         Map<String, String> result = getResultMap(attachEntity);
 		return result;
 	}
@@ -137,11 +141,16 @@ public class ImageController extends BaseController {
 	 * @param param
 	 * @return
 	 */
+	@RequiresUser
 	@PostMapping(value = "upload/tailored/thumb")
 	public Map<String,String> uploadTailoredThumb(@RequestBody UploadParam param){
 		String uid = getLoginUID();
 		String baseStr = param.getBaseString();
-		AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid);
+		String imageType = "png";
+		if (StringUtils.isNotBlank(param.getImageType())){
+			imageType = param.getImageType();
+		}
+		AttachEntity attachEntity = attachService.uploadBase64(baseStr,uid,imageType);
 		Map<String, String> result = getResultMap(attachEntity);
 		return result;
 	}
