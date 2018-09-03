@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import net.coobird.thumbnailator.Thumbnails;
 import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 @Service
 public class AttachService {
@@ -44,6 +45,15 @@ public class AttachService {
 		return entity;
 	}
 
+
+	public String getBase64StringBy(String mediaId){
+		AttachEntity attachEntity = attachRepository.findOne(mediaId);
+		String filename = attachEntity.getFilename();
+		String filePath = properties.getFilePath()+File.separator + filename;
+		String imageStr = getImageStr(filePath);
+		return imageStr;
+	}
+
 	public AttachEntity uploadThumbBase64(String base64,String uid,double scale){
 		String id = UUID.randomUUID().toString();
 		String filename = id+".png";
@@ -59,6 +69,7 @@ public class AttachService {
 		AttachEntity entity = saveAttach(uid, id, filename);
 		return entity;
 	}
+
 
 
 	public AttachEntity tailoredImage(String attachId,String uid,double scale) throws IOException {
@@ -184,5 +195,27 @@ public class AttachService {
 		{
 			return "";
 		}
+	}
+
+	/**
+	 * @Description: 根据图片地址转换为base64编码字符串
+	 * @Author:
+	 * @CreateTime:
+	 * @return
+	 */
+	public static String getImageStr(String imgFile) {
+		InputStream inputStream = null;
+		byte[] data = null;
+		try {
+			inputStream = new FileInputStream(imgFile);
+			data = new byte[inputStream.available()];
+			inputStream.read(data);
+			inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// 加密
+		BASE64Encoder encoder = new BASE64Encoder();
+		return encoder.encode(data);
 	}
 }
